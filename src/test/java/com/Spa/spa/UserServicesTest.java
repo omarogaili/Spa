@@ -54,15 +54,17 @@ public class UserServicesTest {
 
     @Test
     public void testFindUserByName_Should_Return_True(){
+        String userId = "1212345";
         String userName = "testuser";
         String password = "testpassword";
         String role = "user";
-        User userInput= new User(null, userName, password, role);
-        User savedUser = new User(new ObjectId().toString(), userName, password, role);
+        User userInput= new User(userId , userName, password, role);
+        User savedUser = new User(userId , userName, password, role);
         when(mongoOperations.save(any(User.class))).thenReturn(savedUser);
         when(mongoOperations.findById(savedUser.getId(), User.class)).thenReturn(savedUser);
         User userSavedResult = userServices.createUser(userInput);
-        User userResult = userServices.findByUsername(userSavedResult.getId());
+        User userResult = userServices.findByUsername(userSavedResult.getUsername());
+        System.out.println("the User name is:" + userResult.getUsername());
         assertNotNull(userResult);
         assert userResult.getUsername().equals(userName);
     }

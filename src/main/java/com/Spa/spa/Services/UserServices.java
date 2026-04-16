@@ -1,5 +1,6 @@
 package com.Spa.spa.Services;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class UserServices implements IUserServices {
                 throw new IllegalArgumentException("User cannot be null");
             }
             mongoOperations.save(user);
-            return new User(null, user.getUsername(), user.getPassword(), user.getRole());
+            return new User(user.getId(), user.getUsername(), user.getPassword(), user.getRole());
         } catch (IllegalArgumentException e) {
             throw e;
         }
