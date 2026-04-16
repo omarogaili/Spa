@@ -15,11 +15,15 @@ public class UserServices implements IUserServices {
 
     @Override
     public User createUser(User user) {
-        if(user == null){
-            throw new IllegalArgumentException("User cannot be null");
+        try {
+            if (user == null) {
+                throw new IllegalArgumentException("User cannot be null");
+            }
+            mongoOperations.save(user);
+            return new User(null, user.getUsername(), user.getPassword(), user.getRole());
+        } catch (IllegalArgumentException e) {
+            throw e;
         }
-        mongoOperations.save(user);
-        return new User(null, user.getUsername(), user.getPassword(), user.getRole());
     }
 
     @Override
@@ -29,7 +33,7 @@ public class UserServices implements IUserServices {
 
     @Override
     public String login(String username, String password) {
-        
+
         return null;
     }
 
@@ -50,5 +54,5 @@ public class UserServices implements IUserServices {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
 }
