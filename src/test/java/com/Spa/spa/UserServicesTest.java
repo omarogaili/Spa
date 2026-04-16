@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import com.Spa.spa.Services.UserServices;
 import com.Spa.spa.models.User;
@@ -59,12 +61,12 @@ public class UserServicesTest {
         String password = "testpassword";
         String role = "user";
         User userInput= new User(userId , userName, password, role);
-        User savedUser = new User(userId , userName, password, role);
-        when(mongoOperations.save(any(User.class))).thenReturn(savedUser);
-        when(mongoOperations.findById(savedUser.getId(), User.class)).thenReturn(savedUser);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("username").is(userName));   
+        when(mongoOperations.findOne(query, User.class)).thenReturn(userInput);
         User userSavedResult = userServices.createUser(userInput);
-        User userResult = userServices.findByUsername(userSavedResult.getUsername());
-        System.out.println("the User name is:" + userResult.getUsername());
+        System.out.println(" ******* the User name from userSavedResult is: ***********  " + userSavedResult.getUsername());
+        User userResult = userServices.findByUsername(userName);
         assertNotNull(userResult);
         assert userResult.getUsername().equals(userName);
     }

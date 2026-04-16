@@ -2,6 +2,8 @@ package com.Spa.spa.Services;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.Spa.spa.models.User;
@@ -29,7 +31,9 @@ public class UserServices implements IUserServices {
 
     @Override
     public User findByUsername(String username) {
-        return mongoOperations.findById(username, User.class);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("username").is(username));
+        return mongoOperations.findOne(query, User.class);
     }
 
     @Override
