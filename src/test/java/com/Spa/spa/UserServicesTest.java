@@ -71,4 +71,53 @@ public class UserServicesTest {
         assert userResult.getUsername().equals(userName);
     }
 
+    @Test
+    public void testLogIn_Should_Return_True(){
+        String userId = "1212345";
+        String userName = "testuser";
+        String password = "testpassword";
+        String role = "user";
+        User userInput= new User(userId , userName, password, role);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("username").is(userName).and("password").is(password));
+        when(mongoOperations.findOne(query, User.class)).thenReturn(userInput);
+        String loginResult = userServices.login(userName, password);
+        System.out.println(" ******* the login result is: ***********  " + loginResult);
+        assert loginResult.equals("Login successful");
+        assertNotNull(loginResult);
+    }
+
+    @Test
+    public void testUpdateUser_Should_Return_True(){
+        String userId = "1212345";
+        String userName = "testuser";
+        String password = "testpassword";
+        String role = "user";
+        User userInput= new User(userId , userName, password, role);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(userId));
+        when(mongoOperations.findOne(query, User.class)).thenReturn(userInput);
+        User updatedUserResult = userServices.updateUser(userId, "updatedUser", "updatedPassword", "admin");
+        System.out.println(" ******* the updated user name is: ***********  " + updatedUserResult.getUsername());
+        assertNotNull(updatedUserResult);
+        assert updatedUserResult.getUsername().equals("updatedUser");
+        assert updatedUserResult.getPassword().equals("updatedPassword");
+        assert updatedUserResult.getRole().equals("admin");
+    }
+
+    @Test
+    public void testDeleteUser_Should_Return_True(){
+        String userId = "1212345";
+        String userName = "testuser";
+        String password = "testpassword";
+        String role = "user";
+        User userInput= new User(userId , userName, password, role);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(userId));
+        when(mongoOperations.findOne(query, User.class)).thenReturn(userInput);
+        String deleteResult = userServices.deleteUser(userId);
+        System.out.println(" ******* the delete result is: ***********  " + deleteResult);
+        assert deleteResult.equals("User deleted successfully");
+    }
+
 }
