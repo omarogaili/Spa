@@ -6,7 +6,6 @@ public interface IUserServices {
     public User createUser(User user);
     public User findByUsername(String username);
     public String login(String username, String password);
-    public User register(String username, String password, String role);
     public String deleteUser(String id);
     public User updateUser(String id, String username, String password, String role);
 }
