@@ -12,8 +12,15 @@ public class PackageServices implements IPackageServices {
     }
     @Override
     public String addPackage(Package spaPackage) {
-        mongoOperations.save(spaPackage);
-        return "Package added successfully: " + spaPackage.getName();
+        try{
+            if (spaPackage == null) {
+                return "Package cannot be null";
+            }
+            mongoOperations.save(spaPackage);
+            return "Package added successfully: " + spaPackage.getName();
+        } catch (Exception e) {
+            return "Error adding package: " + e.getMessage();
+        }
     }
 
     @Override
