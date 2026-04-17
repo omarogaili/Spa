@@ -1,6 +1,8 @@
 package com.Spa.spa.Services;
 
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
 
 import com.Spa.spa.models.Package;
 
@@ -26,30 +28,43 @@ public class PackageServices implements IPackageServices {
 
     @Override
     public String updatePackage(Package spaPackage) {
-        Package existingPackage = mongoOperations.findById(spaPackage.getId(), Package.class);
-        if(existingPackage == null){
-            return "Package not found";
+        try{
+
+            Package existingPackage = mongoOperations.findById(spaPackage.getId(), Package.class);
+            if(existingPackage == null){
+                return "Package not found";
+            }
+            existingPackage.setName(spaPackage.getName());
+            existingPackage.setDescription(spaPackage.getDescription());
+            existingPackage.setPrice(spaPackage.getPrice());
+            existingPackage.setDiscountPercentage(spaPackage.getDiscountPercentage());
+            mongoOperations.save(existingPackage);
+            return  existingPackage.getName() +" Package updated successfully";
+        } catch (Exception e) {
+            return "Error adding package: " + e.getMessage();
         }
-        existingPackage.setName(spaPackage.getName());
-        existingPackage.setDescription(spaPackage.getDescription());
-        existingPackage.setPrice(spaPackage.getPrice());
-        existingPackage.setDiscountPercentage(spaPackage.getDiscountPercentage());
-        mongoOperations.save(existingPackage);
-        return  existingPackage.getName() +" Package updated successfully";
     }
 
     @Override
     public String deletePackage(String id) {
-        return null;
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(id));
+        Package existingPackage = mongoOperations.findOne(query, Package.class);
+        if(existingPackage == null){
+            return "Package not found";
+        }
+        String packageName = existingPackage.getName();
+        mongoOperations.remove(query, Package.class);
+        return packageName + " has been deleted successfully";
     }
 
     @Override
     public Package getPackageById(String id) {
-        return null;
+        return mongoOperations.findById(id, Package.class);
     }
 
     @Override
     public Iterable<Package> getAllPackages() {
-        return null;
+        return mongoOperations.findAll(Package.class);
     }
 }
