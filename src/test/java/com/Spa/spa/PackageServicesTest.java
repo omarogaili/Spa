@@ -34,4 +34,12 @@ public class PackageServicesTest {
         assertNotNull(result);
         assertEquals("Package added successfully: " + spaPackage.getName(), result);
     }
+
+    @Test
+    public void addPackage_Should_Handle_Null_Package(){
+        Package spaPackage = null;
+        String result = packageServices.addPackage(spaPackage);
+        assertNotNull(result);
+        assertEquals("Package cannot be null", result);
+    }
 }
