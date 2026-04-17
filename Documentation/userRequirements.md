@@ -10,6 +10,7 @@ This document outlines the user requirements for the Spa application. It provide
    - Users must be able to booking an appointment without creating an account. 
    - Users should be able to receive a confirmation email after booking an appointment.
    - The system should flow the GDPR law according which data should be gathered and stored securely.
+   - If more than two people booked an appointment then a discount of 10% should be applied to the total price of the appointment. The discount should be   reflected in the confirmation email sent to the user after booking the appointment. The email should clearly state the original price, the discount applied, and the final price after the discount.
 
 2. **Appointment Scheduling**
     - Users must be able to view available time slots for appointments.

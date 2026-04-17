@@ -12,11 +12,15 @@ public class Order {
     private String customerName;
     private String spaPackage;
     private int numberOfPeople;
+    private String telephoneNumber;
+    private String email;
     private double price;
     private LocalDate orderDate;
-    private String telephoneNumber;
+    private PackageSnapShot packageSnapShot;
+    private String packageId;
+
     public Order(String id, String customerName, String spaPackage, int numberOfPeople, double price,
-            LocalDate orderDate, String telephoneNumber) {
+            LocalDate orderDate, String telephoneNumber, String email, PackageSnapShot packageSnapShot, String packageId) {
         this.id = id;
         this.customerName = customerName;
         this.spaPackage = spaPackage;
@@ -24,6 +28,9 @@ public class Order {
         this.price = price;
         this.orderDate = orderDate;
         this.telephoneNumber = telephoneNumber;
+        this.email = email;
+        this.packageSnapShot = packageSnapShot;
+        this.packageId = packageId;
     }
 
     public String getId() {
@@ -65,7 +72,26 @@ public class Order {
     public void setTelephoneNumber(String telephoneNumber) {
         this.telephoneNumber = telephoneNumber;
     }
+
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public PackageSnapShot getPackageSnapShot() {
+        return packageSnapShot;
+    }
+    public void setPackageSnapShot(PackageSnapShot packageSnapShot) {
+        this.packageSnapShot = packageSnapShot;
+    }
+
+    public String getPackageId() {
+        return packageId;
+    }
+    public void setPackageId(String packageId) {
+        this.packageId = packageId;
+    }
     
-
-
 }
