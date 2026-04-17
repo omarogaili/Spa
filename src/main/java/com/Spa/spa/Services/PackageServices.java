@@ -10,9 +10,10 @@ public class PackageServices implements IPackageServices {
     public PackageServices(MongoOperations mongoOperations) {
         this.mongoOperations = mongoOperations;
     }
+
     @Override
     public String addPackage(Package spaPackage) {
-        try{
+        try {
             if (spaPackage == null) {
                 return "Package cannot be null";
             }
@@ -25,7 +26,16 @@ public class PackageServices implements IPackageServices {
 
     @Override
     public String updatePackage(Package spaPackage) {
-        return null;
+        Package existingPackage = mongoOperations.findById(spaPackage.getId(), Package.class);
+        if(existingPackage == null){
+            return "Package not found";
+        }
+        existingPackage.setName(spaPackage.getName());
+        existingPackage.setDescription(spaPackage.getDescription());
+        existingPackage.setPrice(spaPackage.getPrice());
+        existingPackage.setDiscountPercentage(spaPackage.getDiscountPercentage());
+        mongoOperations.save(existingPackage);
+        return  existingPackage.getName() +" Package updated successfully";
     }
 
     @Override

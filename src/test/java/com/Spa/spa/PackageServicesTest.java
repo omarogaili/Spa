@@ -25,10 +25,10 @@ public class PackageServicesTest {
 
     @Test
     public void addPackage_Should_Return_SuccessMessage() {
-        Package spaPackage = new Package("Relaxation Package", "feeling Good", 200);
+        Package spaPackage = new Package("12445","Relaxation Package", "feeling Good", 200);
         when(mongoOperations.save(spaPackage)).thenReturn(spaPackage);
         when(mongoOperations.findById(spaPackage.getId(), Package.class)).thenReturn(spaPackage);
-        System.out.println(" *********** Package ID: " + spaPackage.getName()+ " ***********");
+        System.out.println(" *********** Package ID: " + spaPackage.getName() + " ***********");
 
         String result = packageServices.addPackage(spaPackage);
         assertNotNull(result);
@@ -36,10 +36,23 @@ public class PackageServicesTest {
     }
 
     @Test
-    public void addPackage_Should_Handle_Null_Package(){
+    public void addPackage_Should_Handle_Null_Package() {
         Package spaPackage = null;
         String result = packageServices.addPackage(spaPackage);
         assertNotNull(result);
         assertEquals("Package cannot be null", result);
+    }
+
+    @Test
+    public void updatePackage_Should_Return_SuccessMessage() {
+        Package spaPackage = new Package("1234","Relaxation Package", "feeling Good", 200);
+        when(mongoOperations.findById(spaPackage.getId(), Package.class)).thenReturn(spaPackage);
+        when(mongoOperations.save(spaPackage)).thenReturn(spaPackage);
+        spaPackage.setPrice(250);
+        Package updatedPackage = new Package("1234","testPackage", "feeling Good", 250);
+        String result = packageServices.updatePackage(updatedPackage);
+        assertNotNull(result);
+        System.out.println("******** Test2 The new Name is : " + result + " ********" );
+        assertEquals(updatedPackage.getName() + " Package updated successfully", result);
     }
 }
