@@ -10,7 +10,6 @@ public class Order {
     @Id
     private String id;
     private String customerName;
-    private String spaPackage;
     private int numberOfPeople;
     private String telephoneNumber;
     private String email;
@@ -19,11 +18,10 @@ public class Order {
     private PackageSnapShot packageSnapShot;
     private String packageId;
 
-    public Order(String id, String customerName, String spaPackage, int numberOfPeople, double price,
+    public Order(String id, String customerName, int numberOfPeople, double price,
             LocalDate orderDate, String telephoneNumber, String email, PackageSnapShot packageSnapShot, String packageId) {
         this.id = id;
         this.customerName = customerName;
-        this.spaPackage = spaPackage;
         this.numberOfPeople = numberOfPeople;
         this.price = price;
         this.orderDate = orderDate;
@@ -42,12 +40,7 @@ public class Order {
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
     }
-    public String getSpaPackage() {
-        return spaPackage;
-    }
-    public void setSpaPackage(String spaPackage) {
-        this.spaPackage = spaPackage;
-    }
+
     public int getNumberOfPeople() {
         return numberOfPeople;
     }

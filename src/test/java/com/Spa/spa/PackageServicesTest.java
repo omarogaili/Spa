@@ -34,9 +34,8 @@ public class PackageServicesTest {
         Package spaPackage = new Package("12445","Relaxation Package", "feeling Good", 200);
         when(mongoOperations.save(spaPackage)).thenReturn(spaPackage);
         when(mongoOperations.findById(spaPackage.getId(), Package.class)).thenReturn(spaPackage);
-        System.out.println(" *********** Package ID: " + spaPackage.getName() + " ***********");
-
         String result = packageServices.addPackage(spaPackage);
+
         assertNotNull(result);
         assertEquals("Package added successfully: " + spaPackage.getName(), result);
     }
@@ -57,8 +56,8 @@ public class PackageServicesTest {
         spaPackage.setPrice(250);
         Package updatedPackage = new Package("1234","testPackage", "feeling Good", 250);
         String result = packageServices.updatePackage(updatedPackage);
+
         assertNotNull(result);
-        System.out.println("******** Test2 The new Name is : " + result + " ********" );
         assertEquals(updatedPackage.getName() + " Package updated successfully", result);
     }
 
@@ -67,7 +66,7 @@ public class PackageServicesTest {
         Package spaPackage = new Package("1234","Relaxation Package", "feeling Good", 200);
         when(mongoOperations.findById(spaPackage.getId(), Package.class)).thenReturn(null);
         String result = packageServices.updatePackage(spaPackage);
-        System.out.println("******** Test3 The new Name is : " + result + " ********" );
+
         assertNotNull(result);
         assertEquals("Package not found", result);
     }
@@ -90,8 +89,8 @@ public class PackageServicesTest {
         query.addCriteria(Criteria.where("id").is(id));
         when(mongoOperations.findOne(query, Package.class)).thenReturn(spaPackage);
         String result = packageServices.deletePackage(id);
+
         assertNotNull(result);
-        System.out.println("******** Test4 The new Name is : " + result + " ********" );
         assertEquals(spaPackage.getName() + " has been deleted successfully", result);
     }
 
@@ -102,8 +101,8 @@ public class PackageServicesTest {
         query.addCriteria(Criteria.where("id").is(id));
         when(mongoOperations.findOne(query, Package.class)).thenReturn(null);
         String result = packageServices.deletePackage(id);
+
         assertNotNull(result);
-        System.out.println("******** Test5 The new Name is : " + result + " ********" );
         assertEquals("Package not found", result); 
     }
 
