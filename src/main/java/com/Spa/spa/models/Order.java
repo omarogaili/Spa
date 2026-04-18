@@ -13,17 +13,18 @@ public class Order {
     private int numberOfPeople;
     private String telephoneNumber;
     private String email;
-    private double price;
+    private double totalPrice;
+    private double standardPrice;
     private LocalDate orderDate;
     private PackageSnapShot packageSnapShot;
     private String packageId;
 
-    public Order(String id, String customerName, int numberOfPeople, double price,
+    public Order(String id, String customerName, int numberOfPeople, double standardPrice,
             LocalDate orderDate, String telephoneNumber, String email, PackageSnapShot packageSnapShot, String packageId) {
         this.id = id;
         this.customerName = customerName;
         this.numberOfPeople = numberOfPeople;
-        this.price = price;
+        this.standardPrice = standardPrice;
         this.orderDate = orderDate;
         this.telephoneNumber = telephoneNumber;
         this.email = email;
@@ -47,11 +48,17 @@ public class Order {
     public void setNumberOfPeople(int numberOfPeople) {
         this.numberOfPeople = numberOfPeople;
     }
-    public double getPrice() {
-        return price;
+    public double getTotalPrice() {
+        return totalPrice;
     }
-    public void setPrice(double price) {
-        this.price = price;
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+    public double getStandardPrice() {
+        return standardPrice;
+    }
+    public void setStandardPrice(double standardPrice) {
+        this.standardPrice = standardPrice;
     }
     public LocalDate getOrderDate() {
         return orderDate;

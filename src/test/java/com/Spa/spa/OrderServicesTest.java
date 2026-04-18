@@ -31,14 +31,18 @@ public class OrderServicesTest {
     @Test
     public void testAddOrder() {
         String packageId = "1234";
-        Package spaPackage = new Package(packageId,"Relaxation Package", "feeling Good", 200);
+        Package spaPackage = new Package(packageId,"Relaxation Package", "feeling Good", 500);
         when(mongoOperations.findById(packageId, Package.class)).thenReturn(spaPackage);
         PackageSnapShot packageSnapShot = new PackageSnapShot(spaPackage.getId(),spaPackage.getName(), spaPackage.getDescription(), spaPackage.getPrice(), spaPackage.getDiscountPercentage());
         LocalDate orderDate = LocalDate.now();
-        Order order = new Order("packageId", "packageId", 4, 250, orderDate, "packageId", "packageId@hotmail.com", packageSnapShot ,spaPackage.getId());
+        Order order = new Order("packageId", "packageId", 4,  350, orderDate, "packageId", "packageId@hotmail.com", packageSnapShot ,spaPackage.getId());
         String result = orderServices.addOrder(packageId, order);
         assert result.equals("An confirmation email has been sent to " + order.getEmail());
-        assertEquals(350, order.getPrice() );
+        double expectedCalculatedPrice = orderServices.calculatePrice(packageSnapShot, order.getNumberOfPeople(), order.getStandardPrice());
+
+        System.out.println("********** Expected Price: " + expectedCalculatedPrice + " **********");
+        System.out.println("********** Total Price: " + order.getTotalPrice() + " **********");
+        assertEquals(3100, order.getTotalPrice() );
     }
 
     @Test
@@ -56,7 +60,7 @@ public class OrderServicesTest {
         Package spaPackage = new Package("1234","Relaxation Package", "feeling Good", 200);
         PackageSnapShot packageSnapShot = new PackageSnapShot(spaPackage.getId(),spaPackage.getName(), spaPackage.getDescription(), spaPackage.getPrice(), spaPackage.getDiscountPercentage());
         LocalDate orderDate = LocalDate.now();
-        Order order = new Order("packageId", "packageId", 4, 250, orderDate, "packageId", "packageId@hotmail.com", packageSnapShot ,spaPackage.getId());
+        Order order = new Order("packageId", "packageId", 4,  350, orderDate, "packageId", "packageId@hotmail.com", packageSnapShot ,spaPackage.getId());
         when(mongoOperations.findById(orderId, Order.class)).thenReturn(order);
         Order result = orderServices.getOrderById(orderId);
         assertEquals(order, result);
@@ -69,6 +73,8 @@ public class OrderServicesTest {
         Order result = orderServices.getOrderById(orderId);
         assertNull(result);
     }
+
+    
 
     @Test
     public void GetOrderById_Should_Return_Null_When_Order_Not_Found() {
@@ -83,7 +89,7 @@ public class OrderServicesTest {
         Package spaPackage = new Package("1234","Relaxation Package", "feeling Good", 200);
         PackageSnapShot packageSnapShot = new PackageSnapShot(spaPackage.getId(),spaPackage.getName(), spaPackage.getDescription(), spaPackage.getPrice(), spaPackage.getDiscountPercentage());
         LocalDate orderDate = LocalDate.now();
-        Order order = new Order("packageId", "packageId", 4, 250, orderDate, "packageId", "packageId@hotmail.com", packageSnapShot ,spaPackage.getId());
+        Order order = new Order("packageId", "packageId", 4,  350, orderDate, "packageId", "packageId@hotmail.com", packageSnapShot ,spaPackage.getId());
         when(mongoOperations.findAll(Order.class)).thenReturn(java.util.Arrays.asList(order));
         Iterable<Order> result = orderServices.getAllOrders();
         assert result != null;
