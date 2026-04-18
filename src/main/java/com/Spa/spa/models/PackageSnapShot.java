@@ -14,7 +14,12 @@ public class PackageSnapShot {
         this.price = price;
         this.discountPercentage = discountPercentage;
     }
-
+    public void setId(String id) {
+        this.id = id;
+    }
+    public String getId() {
+        return id;
+    }
     public String getName() {
         return name;
     }
@@ -22,9 +27,6 @@ public class PackageSnapShot {
         this.name = name;
     }
 
-    public String getId() {
-        return id;
-    }
     
     public String getDescription() {
         return description;

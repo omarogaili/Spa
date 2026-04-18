@@ -1,11 +1,13 @@
 package com.Spa.spa.Services;
 
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import com.Spa.spa.models.Package;
 
+@Service
 public class PackageServices implements IPackageServices {
     private MongoOperations mongoOperations;
 
