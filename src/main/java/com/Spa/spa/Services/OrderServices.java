@@ -13,17 +13,20 @@ import com.Spa.spa.models.PackageSnapShot;
 @Service
 public class OrderServices implements IOrderServices {
     MongoOperations mongoOperations;
+    
 
     public OrderServices(MongoOperations mongoOperations) {
         this.mongoOperations = mongoOperations;
     }
 
-    public Double calculatePrice(PackageSnapShot spaPackage, int numberOfPeople) {
-        double unitPrice = spaPackage.getPrice();
-        if (numberOfPeople > 2) {
-            double firstPersonPrice = unitPrice;
-            double additionalPersonPrice = (numberOfPeople - 1) * 50;
-            return firstPersonPrice + additionalPersonPrice;
+    public Double calculatePrice(PackageSnapShot spaPackage, int numberOfPeople, double standardPrice) {
+        double unitPrice = standardPrice + spaPackage.getPrice();
+        double totalPrice = 0;
+        if (numberOfPeople > 1) {
+            for(int i= 0; i < numberOfPeople; i++){
+                totalPrice += unitPrice - (i * 50);
+            }
+            return totalPrice;
         } else {
             return unitPrice * numberOfPeople;
         }
@@ -43,8 +46,8 @@ public class OrderServices implements IOrderServices {
                 spaPackage.getDescription(), spaPackage.getPrice(), spaPackage.getDiscountPercentage());
         order.setPackageSnapShot(packageSnapShot);
         int people = order.getNumberOfPeople();
-        double totalPrice = calculatePrice(packageSnapShot, people);
-        order.setPrice(totalPrice);
+        double totalPrice = calculatePrice(packageSnapShot, people, order.getStandardPrice());
+        order.setTotalPrice(totalPrice);
         order.setPackageId(packageId);
         order.setOrderDate(LocalDate.now());
         mongoOperations.save(order);
@@ -59,8 +62,9 @@ public class OrderServices implements IOrderServices {
         }
         existingOrder.setCustomerName(order.getCustomerName());
         existingOrder.setNumberOfPeople(order.getNumberOfPeople());
-        double newPrice = calculatePrice(existingOrder.getPackageSnapShot(), order.getNumberOfPeople());
-        existingOrder.setPrice(newPrice);
+        existingOrder.setStandardPrice(order.getStandardPrice());
+        double newPrice = calculatePrice(existingOrder.getPackageSnapShot(), order.getNumberOfPeople(), order.getStandardPrice());
+        existingOrder.setTotalPrice(newPrice);
         existingOrder.setOrderDate(LocalDate.now());
         existingOrder.setTelephoneNumber(order.getTelephoneNumber());
         existingOrder.setEmail(order.getEmail());
