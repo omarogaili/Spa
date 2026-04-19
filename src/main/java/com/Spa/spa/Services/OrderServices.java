@@ -3,7 +3,6 @@ package com.Spa.spa.Services;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -97,21 +96,17 @@ public class OrderServices implements IOrderServices {
 
     @Override
     public Iterable<Order> getAllOrders() {
-        Iterable<Order> orders = mongoOperations.findAll(Order.class);
-        if(orders == null){
-            return null;
-        }
-        return orders;
+        return mongoOperations.findAll(Order.class);
     }
 
     @Override
+    @SuppressWarnings("all")
     public Iterable<Order> getLastMonthOrders(){
         try{
             LocalDate lastMonth = LocalDate.now().minusMonths(1);
             Query query = new Query();
             query.addCriteria(Criteria.where("orderDate").gte(lastMonth));
-            Iterable<Order> orders = mongoOperations.find(query, Order.class);
-            return orders;
+            return mongoOperations.find(query, Order.class);
 
         } catch(Exception e){
             throw new RuntimeException("failed", e);
@@ -124,8 +119,7 @@ public class OrderServices implements IOrderServices {
             LocalDate lastWeek = LocalDate.now().minusWeeks(1);
             Query query = new Query();
             query.addCriteria(Criteria.where("orderDate").gte(lastWeek));
-            Iterable<Order> lastWeekOrderList=  mongoOperations.find(query, Order.class);
-            return lastWeekOrderList;
+            return mongoOperations.find(query, Order.class);
         }catch(Exception e){
             throw new RuntimeException("failed", e);
         }
@@ -139,20 +133,14 @@ public class OrderServices implements IOrderServices {
         Query query = new Query();
         query.addCriteria(Criteria.where("orderDate").gte(startOfTheDay).lt(endOfTheDay));
         long currentDayBookings = mongoOperations.count(query,Order.class);
-        if(currentDayBookings >= 30){
-            return true;
-        }
-        return false;
+        return currentDayBookings >= 20;
     }
 
     @Override
     public boolean isSpaHouseClosed (){
         LocalDate today = LocalDate.now();
         DayOfWeek todaysName = today.getDayOfWeek();
-        if(todaysName == DayOfWeek.MONDAY || todaysName == DayOfWeek.SATURDAY || todaysName == DayOfWeek.SUNDAY ){
-            return true;
-        }
-        return false;
+        return todaysName == DayOfWeek.MONDAY || todaysName == DayOfWeek.SATURDAY || todaysName == DayOfWeek.SUNDAY;
     }
 
     @Override
@@ -164,10 +152,6 @@ public class OrderServices implements IOrderServices {
         Query qr = new Query();
         qr.addCriteria(Criteria.where("orderDate").gte(startOfTheDay).lt(endOfTheDay).and("packageName").is(snapShot.getName()));
         long specialPackageBookings = mongoOperations.count(qr,Order.class);
-        if(specialPackageBookings >= 10){
-            return true;
-        }
-
-        return false; 
+        return specialPackageBookings >= 5;
     }
 }
