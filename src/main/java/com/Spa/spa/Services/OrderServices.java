@@ -1,8 +1,13 @@
 package com.Spa.spa.Services;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.Spa.spa.models.Order;
@@ -13,7 +18,6 @@ import com.Spa.spa.models.PackageSnapShot;
 @Service
 public class OrderServices implements IOrderServices {
     MongoOperations mongoOperations;
-    
 
     public OrderServices(MongoOperations mongoOperations) {
         this.mongoOperations = mongoOperations;
@@ -100,4 +104,70 @@ public class OrderServices implements IOrderServices {
         return orders;
     }
 
+    @Override
+    public Iterable<Order> getLastMonthOrders(){
+        try{
+            LocalDate lastMonth = LocalDate.now().minusMonths(1);
+            Query query = new Query();
+            query.addCriteria(Criteria.where("orderDate").gte(lastMonth));
+            Iterable<Order> orders = mongoOperations.find(query, Order.class);
+            return orders;
+
+        } catch(Exception e){
+            throw new RuntimeException("failed", e);
+        }
+    }
+
+    @Override
+    public Iterable<Order> getLastWeekOrders(){
+        try{
+            LocalDate lastWeek = LocalDate.now().minusWeeks(1);
+            Query query = new Query();
+            query.addCriteria(Criteria.where("orderDate").gte(lastWeek));
+            Iterable<Order> lastWeekOrderList=  mongoOperations.find(query, Order.class);
+            return lastWeekOrderList;
+        }catch(Exception e){
+            throw new RuntimeException("failed", e);
+        }
+    }
+
+    @Override
+    public boolean isfullBooked (){
+        LocalDate currentDay = LocalDate.now();
+        LocalDateTime startOfTheDay= currentDay.atStartOfDay();
+        LocalDateTime endOfTheDay = currentDay.plusDays(1).atStartOfDay();
+        Query query = new Query();
+        query.addCriteria(Criteria.where("orderDate").gte(startOfTheDay).lt(endOfTheDay));
+        long currentDayBookings = mongoOperations.count(query,Order.class);
+        if(currentDayBookings >= 30){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isSpaHouseClosed (){
+        LocalDate today = LocalDate.now();
+        DayOfWeek todaysName = today.getDayOfWeek();
+        if(todaysName == DayOfWeek.MONDAY || todaysName == DayOfWeek.SATURDAY || todaysName == DayOfWeek.SUNDAY ){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isSpaPackageFullBooked(PackageSnapShot snapShot){
+        LocalDate currentDay = LocalDate.now();
+        LocalDateTime startOfTheDay = currentDay.atStartOfDay();
+        LocalDateTime endOfTheDay = currentDay.plusDays(1).atStartOfDay();
+
+        Query qr = new Query();
+        qr.addCriteria(Criteria.where("orderDate").gte(startOfTheDay).lt(endOfTheDay).and("packageName").is(snapShot.getName()));
+        long spiceliPackageBookings = mongoOperations.count(qr,Order.class);
+        if(spiceliPackageBookings >= 10){
+            return true;
+        }
+
+        return false; 
+    }
 }
