@@ -163,8 +163,8 @@ public class OrderServices implements IOrderServices {
 
         Query qr = new Query();
         qr.addCriteria(Criteria.where("orderDate").gte(startOfTheDay).lt(endOfTheDay).and("packageName").is(snapShot.getName()));
-        long spiceliPackageBookings = mongoOperations.count(qr,Order.class);
-        if(spiceliPackageBookings >= 10){
+        long specialPackageBookings = mongoOperations.count(qr,Order.class);
+        if(specialPackageBookings >= 10){
             return true;
         }
 
