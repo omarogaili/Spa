@@ -12,7 +12,7 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
-    private String SECRET = "gVPU7e3UZJueR3tnrktjWA==";
+    private String SECRET = "hu5lYn6aQpfw3dsCoaZXfx6yG28B2STNnjOlD1QuiML8xBvBhbVEhLDBFJEQFFbC";
     private final Key key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET));
 
     public String generateToken (String userName, String role){
