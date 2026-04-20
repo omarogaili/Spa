@@ -23,7 +23,7 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/login", "/api/customers/booking-interface" , 
-            "/api/customers/book-appointment", "/api/customers/cancel-appointment/{id}").permitAll()
+            "/api/customers/book-appointment", "/api/customers/cancel-appointment/{id}", "/api/admin/manage-appointments").permitAll()
             .anyRequest().authenticated()
         )
         .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
