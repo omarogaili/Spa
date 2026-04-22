@@ -1,5 +1,6 @@
 package com.Spa.spa;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -26,11 +27,12 @@ public class UserServicesTest {
     JwtService jwtService;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         mongoOperations = mock(MongoOperations.class);
         jwtService = mock(JwtService.class);
         userServices = new UserServices(mongoOperations, jwtService);
     }
+
     @Test
     public void testCreateUser() {
         String username = "testuser";
@@ -60,45 +62,47 @@ public class UserServicesTest {
     }
 
     @Test
-    public void testFindUserByName_Should_Return_True(){
+    public void testFindUserByName_Should_Return_True() {
         String userId = "1212345";
         String userName = "testuser";
         String password = "testpassword";
         String role = "user";
-        User userInput= new User(userId , userName, password, role);
+        User userInput = new User(userId, userName, password, role);
         Query query = new Query();
-        query.addCriteria(Criteria.where("username").is(userName));   
+        query.addCriteria(Criteria.where("username").is(userName));
         when(mongoOperations.findOne(query, User.class)).thenReturn(userInput);
         User userSavedResult = userServices.createUser(userInput);
-        System.out.println(" ******* the User name from userSavedResult is: ***********  " + userSavedResult.getUsername());
+        System.out.println(
+                " ******* the User name from userSavedResult is: ***********  " + userSavedResult.getUsername());
         User userResult = userServices.findByUsername(userName);
         assertNotNull(userResult);
         assert userResult.getUsername().equals(userName);
     }
 
     @Test
-    public void testLogIn_Should_Return_True(){
+    public void testLogIn_Should_Return_True() {
         String userId = "1212345";
         String userName = "testuser";
         String password = "testpassword";
         String role = "user";
-        User userInput= new User(userId , userName, password, role);
+        String expectedToken ="test-jwt-token";
+        User userInput = new User(userId, userName, password, role);
         Query query = new Query();
         query.addCriteria(Criteria.where("username").is(userName).and("password").is(password));
         when(mongoOperations.findOne(query, User.class)).thenReturn(userInput);
+        when(jwtService.generateToken(userName, role)).thenReturn(expectedToken);
         String loginResult = userServices.login(userName, password);
         System.out.println(" ******* the login result is: ***********  " + loginResult);
-        assert loginResult.equals("Login successful");
-        assertNotNull(loginResult);
+        assertEquals(expectedToken, loginResult);
     }
 
     @Test
-    public void testUpdateUser_Should_Return_True(){
+    public void testUpdateUser_Should_Return_True() {
         String userId = "1212345";
         String userName = "testuser";
         String password = "testpassword";
         String role = "user";
-        User userInput= new User(userId , userName, password, role);
+        User userInput = new User(userId, userName, password, role);
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(userId));
         when(mongoOperations.findOne(query, User.class)).thenReturn(userInput);
@@ -111,12 +115,12 @@ public class UserServicesTest {
     }
 
     @Test
-    public void testDeleteUser_Should_Return_True(){
+    public void testDeleteUser_Should_Return_True() {
         String userId = "1212345";
         String userName = "testuser";
         String password = "testpassword";
         String role = "user";
-        User userInput= new User(userId , userName, password, role);
+        User userInput = new User(userId, userName, password, role);
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(userId));
         when(mongoOperations.findOne(query, User.class)).thenReturn(userInput);
