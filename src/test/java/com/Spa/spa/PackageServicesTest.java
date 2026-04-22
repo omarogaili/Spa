@@ -14,11 +14,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.Spa.spa.Services.PackageServices;
 import com.Spa.spa.models.Package;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class PackageServicesTest {
     private PackageServices packageServices;
     private MongoOperations mongoOperations;

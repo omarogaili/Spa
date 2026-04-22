@@ -12,12 +12,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.Spa.spa.Services.JwtService;
 import com.Spa.spa.Services.UserServices;
 import com.Spa.spa.models.User;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class UserServicesTest {
     MongoOperations mongoOperations;
     UserServices userServices;
