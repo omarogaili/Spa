@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.Spa.spa.Services.OrderServices;
 import com.Spa.spa.Services.UserServices;
 import com.Spa.spa.models.Order;
@@ -29,7 +28,6 @@ public class UserEndpoints {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(orders);
-
     }
 
 }
