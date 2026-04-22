@@ -9,18 +9,14 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.test.context.ActiveProfiles;
+
 
 import com.Spa.spa.Services.OrderServices;
 import com.Spa.spa.models.Order;
 import com.Spa.spa.models.Package;
 import com.Spa.spa.models.PackageSnapShot;
 
-@SpringBootTest
-@ActiveProfiles("test")
 
 public class OrderServicesTest {
     MongoOperations mongoOperations;
