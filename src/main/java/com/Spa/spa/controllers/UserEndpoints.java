@@ -2,6 +2,7 @@ package com.Spa.spa.controllers;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authorization.method.AuthorizeReturnObject;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,4 +59,20 @@ public class UserEndpoints {
             .body("Login successful");
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/api/admin/manage-employees/{username}")
+    public ResponseEntity<Map<String, String>> getUserByUserName(@PathVariable String username){
+        User result = userServices.findByUsername(username);
+        if(result == null){
+            return ResponseEntity.notFound()
+            .build();
+        }
+
+        Map<String, String> response = Map.of(
+            "id" , result.getId(),
+            "userName" , result.getUsername(),
+            "role" , result.getRole()
+        );
+        return ResponseEntity.ok(response);
+    }
 }
