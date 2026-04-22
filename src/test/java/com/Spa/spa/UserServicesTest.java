@@ -28,6 +28,7 @@ public class UserServicesTest {
     @BeforeEach
     public void setUp(){
         mongoOperations = mock(MongoOperations.class);
+        jwtService = mock(JwtService.class);
         userServices = new UserServices(mongoOperations, jwtService);
     }
     @Test
