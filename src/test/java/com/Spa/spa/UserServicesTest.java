@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import com.Spa.spa.Services.JwtService;
 import com.Spa.spa.Services.UserServices;
 import com.Spa.spa.models.User;
 
@@ -20,11 +21,12 @@ import com.Spa.spa.models.User;
 public class UserServicesTest {
     MongoOperations mongoOperations;
     UserServices userServices;
+    JwtService jwtService;
 
     @BeforeEach
     public void setUp(){
         mongoOperations = mock(MongoOperations.class);
-        userServices = new UserServices(mongoOperations);
+        userServices = new UserServices(mongoOperations, jwtService);
     }
     @Test
     public void testCreateUser() {

@@ -27,9 +27,9 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/api/customers/booking-interface",
-                                "/api/customers/book-appointment", "/api/customers/cancel-appointment/{id}",
-                                "/api/admin/manage-appointments")
+                        .requestMatchers("/api/signIn", "/api/customers/booking-interface",
+                                "/api/customers/book-appointment", "/api/customers/cancel-appointment/{id}"
+                                )
                         .permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)

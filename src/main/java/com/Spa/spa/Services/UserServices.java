@@ -11,9 +11,11 @@ import com.Spa.spa.models.User;
 @Service
 public class UserServices implements IUserServices {
     private final MongoOperations mongoOperations;
+    private final JwtService jwtService;
 
-    public UserServices(MongoOperations mongoOperations) {
+    public UserServices(MongoOperations mongoOperations, JwtService jwtService ) {
         this.mongoOperations = mongoOperations;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -42,7 +44,8 @@ public class UserServices implements IUserServices {
         query.addCriteria(Criteria.where("username").is(username).and("password").is(password));
         User user = mongoOperations.findOne(query, User.class);
         if(user != null){
-            return "Login successful";
+            String token= jwtService.generateToken(username, user.getRole());
+            return token;
         } else {
             return "Invalid username or password";
         }
