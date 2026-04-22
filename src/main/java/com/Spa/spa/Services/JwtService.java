@@ -3,6 +3,7 @@ package com.Spa.spa.Services;
 import java.security.Key;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
@@ -12,22 +13,27 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
-    private String SECRET = "hu5lYn6aQpfw3dsCoaZXfx6yG28B2STNnjOlD1QuiML8xBvBhbVEhLDBFJEQFFbC";
-    private final Key key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET));
+    @Value("${SECRET_TOKEN}")
+    private String secretey;
+
+
+    private final Key getKey(){
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretey));
+    }
 
     public String generateToken (String userName, String role){
         return Jwts.builder().setSubject(userName)
                     .claim("role", role)
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis()+ 1000* 60 * 60)) // 1h
-                    .signWith(key)
+                    .signWith(getKey())
                     .compact();
     }
 
     public Claims validateToken(String token){
         try{
             return Jwts.parserBuilder()
-                       .setSigningKey(key)
+                       .setSigningKey(getKey())
                        .build()
                        .parseClaimsJws(token)
                        .getBody();
