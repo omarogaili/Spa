@@ -1,5 +1,7 @@
 package com.Spa.spa.controllers;
 
+import java.net.URI;
+import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +62,7 @@ public class UserEndpoints {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/api/admin/manage-employees/{username}")
+    @GetMapping("/api/admin/manage-employees/{username}")
     public ResponseEntity<Map<String, String>> getUserByUserName(@PathVariable String username){
         User result = userServices.findByUsername(username);
         if(result == null){
@@ -75,4 +77,22 @@ public class UserEndpoints {
         );
         return ResponseEntity.ok(response);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("api/add/admin/manage-employees")
+    public ResponseEntity<Map<String, String>> addNewUser (@RequestBody User user){
+        User response = userServices.createUser(user);
+        if(response == null){
+            return ResponseEntity.badRequest().build();
+        }
+        Map <String, String > result = Map.of(
+            "id" , response.getId(),
+            "username" , response.getUsername(),
+            "role" , response.getRole()
+        );
+        URI location = URI.create("/api/admin/manage-employees/" + response.getUsername());
+        return ResponseEntity.created(location).body(result);
+    }
+
+    
 }

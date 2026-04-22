@@ -4,6 +4,7 @@ package com.Spa.spa.Services;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.Spa.spa.models.User;
@@ -12,10 +13,12 @@ import com.Spa.spa.models.User;
 public class UserServices implements IUserServices {
     private final MongoOperations mongoOperations;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServices(MongoOperations mongoOperations, JwtService jwtService ) {
+    public UserServices(MongoOperations mongoOperations, JwtService jwtService, PasswordEncoder passwordEncoder ) {
         this.mongoOperations = mongoOperations;
         this.jwtService = jwtService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -24,6 +27,7 @@ public class UserServices implements IUserServices {
             if (user == null) {
                 throw new IllegalArgumentException("User cannot be null");
             }
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             mongoOperations.save(user);
             return new User(user.getId(), user.getUsername(), user.getPassword(), user.getRole());
         } catch (IllegalArgumentException e) {
@@ -40,15 +44,12 @@ public class UserServices implements IUserServices {
 
     @Override
     public String login(String username, String password) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("username").is(username).and("password").is(password));
-        User user = mongoOperations.findOne(query, User.class);
-        if(user != null){
-            String token= jwtService.generateToken(username, user.getRole());
-            return token;
-        } else {
-            return "Invalid username or password";
-        }
+        User user = findByUsername(username);
+        if(user == null) return "Invalid username or password";
+        boolean passwordMatch = passwordEncoder.matches(password, user.getPassword());
+        if(!passwordMatch) return "Invalid username or password";
+        String token= jwtService.generateToken(username, user.getRole());
+        return token;
     }
 
 
@@ -67,7 +68,7 @@ public class UserServices implements IUserServices {
         User user = mongoOperations.findOne(query, User.class);
         if (user != null) {
             user.setUsername(username);
-            user.setPassword(password);
+            user.setPassword(passwordEncoder.encode(password));
             user.setRole(role);
             mongoOperations.save(user);
             return user;
