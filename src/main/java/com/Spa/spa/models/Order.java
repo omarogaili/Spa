@@ -18,9 +18,19 @@ public class Order {
     private LocalDate orderDate;
     private PackageSnapShot packageSnapShot;
     private String packageId;
+    private String packageName;
+
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
 
     public Order(String id, String customerName, int numberOfPeople, double standardPrice,
-            LocalDate orderDate, String telephoneNumber, String email, PackageSnapShot packageSnapShot, String packageId) {
+            LocalDate orderDate, String telephoneNumber, String email, PackageSnapShot packageSnapShot, String packageId, String packageName) {
         this.id = id;
         this.customerName = customerName;
         this.numberOfPeople = numberOfPeople;
@@ -30,6 +40,7 @@ public class Order {
         this.email = email;
         this.packageSnapShot = packageSnapShot;
         this.packageId = packageId;
+        this.packageName = packageName;
     }
 
     public String getId() {

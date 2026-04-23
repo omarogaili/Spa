@@ -37,7 +37,7 @@ public class OrderServicesTest {
         when(mongoOperations.findById(packageId, Package.class)).thenReturn(spaPackage);
         PackageSnapShot packageSnapShot = new PackageSnapShot(spaPackage.getId(),spaPackage.getName(), spaPackage.getDescription(), spaPackage.getPrice(), spaPackage.getDiscountPercentage());
         LocalDate orderDate = LocalDate.now();
-        Order order = new Order("packageId", "packageId", 4,  350, orderDate, "packageId", "packageId@hotmail.com", packageSnapShot ,spaPackage.getId());
+        Order order = new Order("packageId", "packageId", 4,  350, orderDate, "packageId", "packageId@hotmail.com", packageSnapShot ,spaPackage.getId(), spaPackage.getName());
         Order result = orderServices.addOrder(packageId, order);
         // assert result.equals("An confirmation email has been sent to " + order.getEmail());
         assertEquals(order, result);
@@ -63,7 +63,7 @@ public class OrderServicesTest {
         Package spaPackage = new Package("1234","Relaxation Package", "feeling Good", 200);
         PackageSnapShot packageSnapShot = new PackageSnapShot(spaPackage.getId(),spaPackage.getName(), spaPackage.getDescription(), spaPackage.getPrice(), spaPackage.getDiscountPercentage());
         LocalDate orderDate = LocalDate.now();
-        Order order = new Order("packageId", "packageId", 4,  350, orderDate, "packageId", "packageId@hotmail.com", packageSnapShot ,spaPackage.getId());
+        Order order = new Order("packageId", "packageId", 4,  350, orderDate, "packageId", "packageId@hotmail.com", packageSnapShot ,spaPackage.getId(), spaPackage.getName());
         when(mongoOperations.findById(orderId, Order.class)).thenReturn(order);
         Order result = orderServices.getOrderById(orderId);
         assertEquals(order, result);
@@ -92,7 +92,7 @@ public class OrderServicesTest {
         Package spaPackage = new Package("1234","Relaxation Package", "feeling Good", 200);
         PackageSnapShot packageSnapShot = new PackageSnapShot(spaPackage.getId(),spaPackage.getName(), spaPackage.getDescription(), spaPackage.getPrice(), spaPackage.getDiscountPercentage());
         LocalDate orderDate = LocalDate.now();
-        Order order = new Order("packageId", "packageId", 4,  350, orderDate, "packageId", "packageId@hotmail.com", packageSnapShot ,spaPackage.getId());
+        Order order = new Order("packageId", "packageId", 4,  350, orderDate, "packageId", "packageId@hotmail.com", packageSnapShot ,spaPackage.getId(), spaPackage.getName());
         when(mongoOperations.findAll(Order.class)).thenReturn(java.util.Arrays.asList(order));
         List<Order> result = orderServices.getAllOrders();
         assert result != null;
