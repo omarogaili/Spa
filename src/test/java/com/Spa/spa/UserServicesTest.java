@@ -107,27 +107,26 @@ public class UserServicesTest {
     @Test
     public void testUpdateUser_Should_Return_True() {
         String userId = "1212345";
-        String oldUserName = "testuser";
+        String username = "testuser";
         String oldPassword = "testpassword";
         String oldRole = "user";
 
-        String newUserName = "updatedUser";
         String newRawPassword = "updatedPassword";
         String newRole = "admin";
         String expectedHashedPassword = "$2a$10$fakeHashValueForTest";
 
-        User existingUser = new User(userId, oldUserName, oldPassword, oldRole);
+        User existingUser = new User(userId, username, oldPassword, oldRole);
 
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is(userId));
+        query.addCriteria(Criteria.where("username").is(username));
 
         when(mongoOperations.findOne(query, User.class)).thenReturn(existingUser);
         when(passwordEncoder.encode(newRawPassword)).thenReturn(expectedHashedPassword);
 
-        User updatedUserResult = userServices.updateUser(userId, newUserName, newRawPassword, newRole);
+        User updatedUserResult = userServices.updateUser(username, newRawPassword, newRole);
 
         assertNotNull(updatedUserResult);
-        assertEquals(newUserName, updatedUserResult.getUsername());
+        assertEquals(username, updatedUserResult.getUsername());
         assertEquals(expectedHashedPassword, updatedUserResult.getPassword());
         assertEquals(newRole, updatedUserResult.getRole());
     }
