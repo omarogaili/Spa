@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.aggregation.BooleanOperators.Or;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -115,7 +115,7 @@ public class OrderEndpoints {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/api/customers/book-appointment/{orderId}")
     public ResponseEntity<Map<String, Object>> updateAnOrder(@PathVariable String orderId, @RequestBody Order order){
-        Order updateOrder = orderServices.updateOrder(orderId, order);
+        Order updateOrder = orderServices.updateOrder(orderId, order, order.getPackageName());
         if(updateOrder == null){
             return ResponseEntity.badRequest().build();
         }
@@ -128,5 +128,14 @@ public class OrderEndpoints {
             "Package name", updateOrder.getPackageSnapShot().getName()
         );
         return ResponseEntity.accepted().body(response);
+    }
+
+    @DeleteMapping("/api/customers/book-appointment/{orderId}")
+    public ResponseEntity<String> deleteOrder(@PathVariable String orderId){
+        String  confirmation = orderServices.deleteOrder(orderId);
+        if(confirmation.isBlank()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(confirmation);
     }
 }

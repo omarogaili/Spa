@@ -59,18 +59,16 @@ public class OrderServices implements IOrderServices {
     }
 
     @Override
-    public Order updateOrder(String id, Order order) {
+    public Order updateOrder(String id, Order order, String packageName) {
         Order existingOrder = mongoOperations.findById(id, Order.class);
         if (existingOrder == null || order == null) {
             return null;
         }
 
-        String newPackageId = order.getPackageId();
-        if (newPackageId == null || newPackageId.isBlank()) {
-            newPackageId = existingOrder.getPackageId();
-        }
 
-        Package spaPackage = mongoOperations.findById(newPackageId, Package.class);
+        Query qr = new Query();
+        qr.addCriteria(Criteria.where("name").is(packageName));
+        Package spaPackage = mongoOperations.findOne(qr, Package.class);
         if (spaPackage == null) {
             return null;
         }
