@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -91,7 +92,7 @@ public class OrderServicesTest {
         LocalDate orderDate = LocalDate.now();
         Order order = new Order("packageId", "packageId", 4,  350, orderDate, "packageId", "packageId@hotmail.com", packageSnapShot ,spaPackage.getId());
         when(mongoOperations.findAll(Order.class)).thenReturn(java.util.Arrays.asList(order));
-        Iterable<Order> result = orderServices.getAllOrders();
+        List<Order> result = orderServices.getAllOrders();
         assert result != null;
         assertEquals(1, ((java.util.Collection<?>) result).size());
     }
