@@ -7,7 +7,7 @@ import com.Spa.spa.models.PackageSnapShot;
 
 public interface IOrderServices {
     public Order addOrder(String packageId, Order order);
-    public String updateOrder(String id, Order order);
+    public Order updateOrder(String id, Order order);
     public String deleteOrder(String id);
     public Order getOrderById(String id);
     public List<Order> getAllOrders();
