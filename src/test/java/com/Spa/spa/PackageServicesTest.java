@@ -33,18 +33,18 @@ public class PackageServicesTest {
         Package spaPackage = new Package("12445","Relaxation Package", "feeling Good", 200);
         when(mongoOperations.save(spaPackage)).thenReturn(spaPackage);
         when(mongoOperations.findById(spaPackage.getId(), Package.class)).thenReturn(spaPackage);
-        String result = packageServices.addPackage(spaPackage);
+        Package result = packageServices.addPackage(spaPackage);
 
         assertNotNull(result);
-        assertEquals("Package added successfully: " + spaPackage.getName(), result);
+        assertEquals(spaPackage, result);
     }
 
     @Test
     public void addPackage_Should_Handle_Null_Package() {
         Package spaPackage = null;
-        String result = packageServices.addPackage(spaPackage);
-        assertNotNull(result);
-        assertEquals("Package cannot be null", result);
+        Package result = packageServices.addPackage(spaPackage);
+        assertNull(result);
+        assertEquals(null, result);
     }
 
     @Test
@@ -52,22 +52,21 @@ public class PackageServicesTest {
         Package spaPackage = new Package("1234","Relaxation Package", "feeling Good", 200);
         when(mongoOperations.findById(spaPackage.getId(), Package.class)).thenReturn(spaPackage);
         when(mongoOperations.save(spaPackage)).thenReturn(spaPackage);
-        spaPackage.setPrice(250);
         Package updatedPackage = new Package("1234","testPackage", "feeling Good", 250);
-        String result = packageServices.updatePackage(updatedPackage);
+        Package result = packageServices.updatePackage(spaPackage.getId() , updatedPackage);
 
         assertNotNull(result);
-        assertEquals(updatedPackage.getName() + " Package updated successfully", result);
+        assertEquals(updatedPackage, result);
     }
 
     @Test
     public void updatePackage_Should_Handle_Package_Not_Found() {
         Package spaPackage = new Package("1234","Relaxation Package", "feeling Good", 200);
         when(mongoOperations.findById(spaPackage.getId(), Package.class)).thenReturn(null);
-        String result = packageServices.updatePackage(spaPackage);
+        Package result = packageServices.updatePackage(spaPackage.getId(),spaPackage);
 
         assertNotNull(result);
-        assertEquals("Package not found", result);
+        assertEquals(null, result);
     }
 
     @Test
@@ -75,7 +74,7 @@ public class PackageServicesTest {
         Package spaPackage = new Package("1234","Relaxation Package", "feeling Good", 200);
         when(mongoOperations.findById(spaPackage.getId(), Package.class)).thenReturn(spaPackage);
         when(mongoOperations.save(spaPackage)).thenThrow(new RuntimeException("Database error"));
-        String result = packageServices.updatePackage(spaPackage);
+        Package result = packageServices.updatePackage(spaPackage.getId(),spaPackage);
         assertNotNull(result);
         assertEquals("Error adding package: Database error", result);
     }

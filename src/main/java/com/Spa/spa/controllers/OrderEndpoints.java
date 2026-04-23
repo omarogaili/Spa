@@ -130,7 +130,7 @@ public class OrderEndpoints {
         return ResponseEntity.accepted().body(response);
     }
 
-    @DeleteMapping("/api/customers/book-appointment/{orderId}")
+    @DeleteMapping("/api/customers/cancel-appointment/{id}")
     public ResponseEntity<String> deleteOrder(@PathVariable String orderId){
         String  confirmation = orderServices.deleteOrder(orderId);
         if(confirmation.isBlank()){

@@ -2,6 +2,9 @@ package com.Spa.spa.Services;
 
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 
@@ -16,34 +19,46 @@ public class PackageServices implements IPackageServices {
     }
 
     @Override
-    public String addPackage(Package spaPackage) {
+    public Package addPackage(Package spaPackage) {
         try {
             if (spaPackage == null) {
-                return "Package cannot be null";
+                return spaPackage;
             }
             mongoOperations.save(spaPackage);
-            return "Package added successfully: " + spaPackage.getName();
+            return spaPackage;
         } catch (Exception e) {
-            return "Error adding package: " + e.getMessage();
+            throw new RuntimeException("Error adding package: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public String updatePackage(Package spaPackage) {
-        try{
-
-            Package existingPackage = mongoOperations.findById(spaPackage.getId(), Package.class);
-            if(existingPackage == null){
-                return "Package not found";
+    public Package updatePackage(String id ,Package spaPackage) {
+        try {
+            Package existingPackage = mongoOperations.findById(id, Package.class);
+            
+            if (existingPackage == null) {
+                return null;
             }
-            existingPackage.setName(spaPackage.getName());
-            existingPackage.setDescription(spaPackage.getDescription());
-            existingPackage.setPrice(spaPackage.getPrice());
-            existingPackage.setDiscountPercentage(spaPackage.getDiscountPercentage());
+            
+            if(spaPackage.getName() !=null){
+                existingPackage.setName(spaPackage.getName());
+            }
+            if(spaPackage.getDescription() != null){
+                existingPackage.setDescription(spaPackage.getDescription());
+            }
+            if(spaPackage.getPrice() > 0){
+                existingPackage.setPrice(spaPackage.getPrice());
+
+            }
+            if(spaPackage.getDiscountPercentage() > 0){
+                existingPackage.setDiscountPercentage(spaPackage.getDiscountPercentage());
+            }
+            
             mongoOperations.save(existingPackage);
-            return  existingPackage.getName() +" Package updated successfully";
+            return existingPackage;
+        
         } catch (Exception e) {
-            return "Error adding package: " + e.getMessage();
+            throw new RuntimeException("Error adding package: " + e.getMessage(), e);
         }
     }
 
@@ -52,7 +67,7 @@ public class PackageServices implements IPackageServices {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(id));
         Package existingPackage = mongoOperations.findOne(query, Package.class);
-        if(existingPackage == null){
+        if (existingPackage == null) {
             return "Package not found";
         }
         String packageName = existingPackage.getName();
@@ -66,7 +81,7 @@ public class PackageServices implements IPackageServices {
     }
 
     @Override
-    public Iterable<Package> getAllPackages() {
+    public List<Package> getAllPackages() {
         return mongoOperations.findAll(Package.class);
     }
 }
