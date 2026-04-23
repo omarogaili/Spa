@@ -3,6 +3,7 @@ package com.Spa.spa.Services;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -95,13 +96,13 @@ public class OrderServices implements IOrderServices {
     }
 
     @Override
-    public Iterable<Order> getAllOrders() {
+    public List<Order> getAllOrders() {
         return mongoOperations.findAll(Order.class);
     }
 
     @Override
     @SuppressWarnings("all")
-    public Iterable<Order> getLastMonthOrders(){
+    public List<Order> getLastMonthOrders(){
         try{
             LocalDate lastMonth = LocalDate.now().minusMonths(1);
             Query query = new Query();
@@ -114,7 +115,7 @@ public class OrderServices implements IOrderServices {
     }
 
     @Override
-    public Iterable<Order> getLastWeekOrders(){
+    public List<Order> getLastWeekOrders(){
         try{
             LocalDate lastWeek = LocalDate.now().minusWeeks(1);
             Query query = new Query();
