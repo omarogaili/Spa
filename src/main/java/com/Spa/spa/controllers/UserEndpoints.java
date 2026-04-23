@@ -78,7 +78,7 @@ public class UserEndpoints {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("api/add/admin/manage-employees")
+    @PostMapping("/api/add/admin/manage-employees")
     public ResponseEntity<Map<String, String>> addNewUser (@RequestBody User user){
         User response = userServices.createUser(user);
         if(response == null){

@@ -1,6 +1,7 @@
 package com.Spa.spa;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,8 +38,9 @@ public class OrderServicesTest {
         PackageSnapShot packageSnapShot = new PackageSnapShot(spaPackage.getId(),spaPackage.getName(), spaPackage.getDescription(), spaPackage.getPrice(), spaPackage.getDiscountPercentage());
         LocalDate orderDate = LocalDate.now();
         Order order = new Order("packageId", "packageId", 4,  350, orderDate, "packageId", "packageId@hotmail.com", packageSnapShot ,spaPackage.getId());
-        String result = orderServices.addOrder(packageId, order);
-        assert result.equals("An confirmation email has been sent to " + order.getEmail());
+        Order result = orderServices.addOrder(packageId, order);
+        // assert result.equals("An confirmation email has been sent to " + order.getEmail());
+        assertEquals(order, result);
         double expectedCalculatedPrice = orderServices.calculatePrice(packageSnapShot, order.getNumberOfPeople(), order.getStandardPrice());
 
         System.out.println("********** Expected Price: " + expectedCalculatedPrice + " **********");
@@ -51,8 +53,8 @@ public class OrderServicesTest {
         String packageId = "12345";
         Package spaPackage = new Package("1234","Relaxation Package", "feeling Good", 200);
         when(mongoOperations.findById(packageId, Package.class)).thenReturn(spaPackage);
-        String result = orderServices.addOrder(packageId, null);
-        assertEquals("Order cannot be null", result);
+        Order result = orderServices.addOrder(packageId, null);
+        assertNull(result);
     }
 
     @Test

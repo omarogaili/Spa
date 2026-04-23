@@ -1,11 +1,17 @@
 package com.Spa.spa.controllers;
 
+import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.BooleanOperators.Or;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Spa.spa.Services.OrderServices;
@@ -61,12 +67,49 @@ public class OrderEndpoints {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/api/admin/spa/SpaStatus")
     public ResponseEntity<String> getSpaStatus(){
-        boolean isSpaFullbooked = orderServices.isfullBooked();
-        if(isSpaFullbooked){
-            return ResponseEntity.ok("The Spa house are fullbooked ");
+        long isSpaFullbooked = orderServices.isfullBooked();
+        if(isSpaFullbooked == 20){
+            return ResponseEntity.ok("The Spa house are fullbooked "+ isSpaFullbooked);
         }
-        return ResponseEntity.ok("Status is good");
+        return ResponseEntity.ok("Status is good "+ isSpaFullbooked);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/api/admin/spa/monthly-overview")
+    public ResponseEntity<String> getMonthlyOverView(){
+        long monthlyOverview = orderServices.lastMonthOverView();
+        if(monthlyOverview == 0){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok("The Last month bookings Overview: " + monthlyOverview);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/api/admin/spa/weekly-overview")
+    public ResponseEntity<String> getWeeklyOverView(){
+        long weeklyOverView = orderServices.lastWeekOverView();
+        if(weeklyOverView == 0){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok("The Last week bookings Overview : " + weeklyOverView);
+    }
+
+    @PostMapping("/api/customers/book-appointment/{packageId}")
+    public ResponseEntity<Map<String, Object>> createAnOrder(@PathVariable String packageId, @RequestBody Order order){
+        Order newOrder = orderServices.addOrder(packageId, order);
+        if(newOrder == null){
+            return ResponseEntity.badRequest().build();
+        }
+        Map <String, Object> response = Map.of(
+            "id" , newOrder.getId(),
+            "number of people", newOrder.getNumberOfPeople(),
+            "Total Price" , newOrder.getTotalPrice(),
+            "email" , newOrder.getEmail(),
+            "Package name", newOrder.getPackageSnapShot().getName()
+        );
+        URI location = URI.create("/api/customers/book-appointment"+ newOrder.getPackageId() + newOrder.getCustomerName());
+        return ResponseEntity.created(location).body(response);
+
+    }
 
 }

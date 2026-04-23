@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/signIn", "/api/customers/booking-interface",
-                                "/api/customers/book-appointment", "/api/customers/cancel-appointment/{id}"
+                                "/api/customers/book-appointment/{packageId}", "/api/customers/cancel-appointment/{id}"
                                 )
                         .permitAll()
                         .anyRequest().authenticated())
