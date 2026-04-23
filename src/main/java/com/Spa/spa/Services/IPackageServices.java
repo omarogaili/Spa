@@ -1,12 +1,14 @@
 package com.Spa.spa.Services;
 
+import java.util.List;
+
 import com.Spa.spa.models.Package;
 
 public interface IPackageServices {
-    public String addPackage(Package spaPackage);
-    public String updatePackage(Package spaPackage);
+    public Package addPackage(Package spaPackage);
+    public Package updatePackage(String id,Package spaPackage);
     public String deletePackage(String id);
     public Package getPackageById(String id);
-    public Iterable<Package> getAllPackages();
+    public List<Package> getAllPackages();
 
 }
