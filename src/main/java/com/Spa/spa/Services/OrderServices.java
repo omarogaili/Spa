@@ -3,6 +3,7 @@ package com.Spa.spa.Services;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -37,13 +38,13 @@ public class OrderServices implements IOrderServices {
     }
 
     @Override
-    public String addOrder(String packageId, Order order) {
+    public Order addOrder(String packageId, Order order) {
         Package spaPackage = mongoOperations.findById(packageId, Package.class);
         if (spaPackage == null) {
-            return "Package not found";
+            return null;
         }
         if (order == null) {
-            return "Order cannot be null";
+            return null;
         }
 
         PackageSnapShot packageSnapShot = new PackageSnapShot(spaPackage.getId(), spaPackage.getName(),
@@ -55,7 +56,7 @@ public class OrderServices implements IOrderServices {
         order.setPackageId(packageId);
         order.setOrderDate(LocalDate.now());
         mongoOperations.save(order);
-        return "An confirmation email has been sent to " + order.getEmail();
+        return order;
     }
 
     @Override
@@ -127,14 +128,33 @@ public class OrderServices implements IOrderServices {
     }
 
     @Override
-    public boolean isfullBooked (){
+    public long isfullBooked (){
         LocalDate currentDay = LocalDate.now();
         LocalDateTime startOfTheDay= currentDay.atStartOfDay();
         LocalDateTime endOfTheDay = currentDay.plusDays(1).atStartOfDay();
         Query query = new Query();
         query.addCriteria(Criteria.where("orderDate").gte(startOfTheDay).lt(endOfTheDay));
-        long currentDayBookings = mongoOperations.count(query,Order.class);
-        return currentDayBookings >= 20;
+        return mongoOperations.count(query,Order.class);
+    }
+
+    @Override
+    public long lastMonthOverView(){
+        LocalDate today = LocalDate.now();
+        LocalDate firstDayOfTheMonth = today.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDayOfTheMonth = today.with(TemporalAdjusters.lastDayOfMonth());
+        Query qr = new Query();
+        qr.addCriteria(Criteria.where("orderDate").gte(firstDayOfTheMonth).lt(lastDayOfTheMonth));
+        return mongoOperations.count(qr, Order.class);
+    }
+    
+    @Override 
+    public long lastWeekOverView (){
+        LocalDate today = LocalDate.now();
+        LocalDate firstDayOfTheWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate lastDayOfTheWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+        Query qr = new Query();
+        qr.addCriteria(Criteria.where("orderDate").gte(firstDayOfTheWeek).lt(lastDayOfTheWeek));
+        return mongoOperations.count(qr,Order.class);
     }
 
     @Override
