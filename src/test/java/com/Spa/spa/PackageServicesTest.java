@@ -3,6 +3,7 @@ package com.Spa.spa;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import com.Spa.spa.Services.PackageServices;
 import com.Spa.spa.models.Package;
 
-
 public class PackageServicesTest {
     private PackageServices packageServices;
     private MongoOperations mongoOperations;
@@ -30,7 +30,7 @@ public class PackageServicesTest {
 
     @Test
     public void addPackage_Should_Return_SuccessMessage() {
-        Package spaPackage = new Package("12445","Relaxation Package", "feeling Good", 200);
+        Package spaPackage = new Package("12445", "Relaxation Package", "feeling Good", 200);
         when(mongoOperations.save(spaPackage)).thenReturn(spaPackage);
         when(mongoOperations.findById(spaPackage.getId(), Package.class)).thenReturn(spaPackage);
         Package result = packageServices.addPackage(spaPackage);
@@ -49,40 +49,44 @@ public class PackageServicesTest {
 
     @Test
     public void updatePackage_Should_Return_SuccessMessage() {
-        Package spaPackage = new Package("1234","Relaxation Package", "feeling Good", 200);
+        Package spaPackage = new Package("1234", "Relaxation Package", "feeling Good", 200);
         when(mongoOperations.findById(spaPackage.getId(), Package.class)).thenReturn(spaPackage);
         when(mongoOperations.save(spaPackage)).thenReturn(spaPackage);
-        Package updatedPackage = new Package("1234","testPackage", "feeling Good", 250);
-        Package result = packageServices.updatePackage(spaPackage.getId() , updatedPackage);
+        Package updatedPackage = new Package("1234", "testPackage", "feeling Good", 250);
+        Package result = packageServices.updatePackage(spaPackage.getId(), updatedPackage);
 
         assertNotNull(result);
-        assertEquals(updatedPackage, result);
+        assertEquals("testPackage", result.getName());
+        assertEquals(250.0, result.getPrice());
     }
 
     @Test
     public void updatePackage_Should_Handle_Package_Not_Found() {
-        Package spaPackage = new Package("1234","Relaxation Package", "feeling Good", 200);
+        Package spaPackage = new Package("1234", "Relaxation Package", "feeling Good", 200);
         when(mongoOperations.findById(spaPackage.getId(), Package.class)).thenReturn(null);
-        Package result = packageServices.updatePackage(spaPackage.getId(),spaPackage);
+        Package result = packageServices.updatePackage(spaPackage.getId(), spaPackage);
 
-        assertNotNull(result);
+        assertNull(result);
         assertEquals(null, result);
     }
 
     @Test
     public void updatePackage_Should_Handle_Exception() {
-        Package spaPackage = new Package("1234","Relaxation Package", "feeling Good", 200);
+        Package spaPackage = new Package("1234", "Relaxation Package", "feeling Good", 200);
         when(mongoOperations.findById(spaPackage.getId(), Package.class)).thenReturn(spaPackage);
         when(mongoOperations.save(spaPackage)).thenThrow(new RuntimeException("Database error"));
-        Package result = packageServices.updatePackage(spaPackage.getId(),spaPackage);
-        assertNotNull(result);
-        assertEquals("Error adding package: Database error", result);
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            packageServices.updatePackage(spaPackage.getId(), spaPackage);
+        });
+
+        assertEquals("Error adding package: Database error", exception.getMessage());
     }
 
     @Test
-    public void deletePackage_Should_Return_SuccessMessage(){
+    public void deletePackage_Should_Return_SuccessMessage() {
         String id = "1234";
-        Package spaPackage = new Package(id,"Relaxation Package", "feeling Good", 200);
+        Package spaPackage = new Package(id, "Relaxation Package", "feeling Good", 200);
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(id));
         when(mongoOperations.findOne(query, Package.class)).thenReturn(spaPackage);
@@ -93,7 +97,7 @@ public class PackageServicesTest {
     }
 
     @Test
-    public void deletePackage_Should_Handle_Package_Not_Found(){
+    public void deletePackage_Should_Handle_Package_Not_Found() {
         String id = "888";
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(id));
@@ -101,11 +105,11 @@ public class PackageServicesTest {
         String result = packageServices.deletePackage(id);
 
         assertNotNull(result);
-        assertEquals("Package not found", result); 
+        assertEquals("Package not found", result);
     }
 
     @Test
-    public void getPackageById_Should_Return_Package(){
+    public void getPackageById_Should_Return_Package() {
         String id = "1234";
         Package spaPackage = new Package(id, "Relaxation Package", "feeling Good", 200);
         when(mongoOperations.findById(id, Package.class)).thenReturn(spaPackage);
@@ -117,7 +121,7 @@ public class PackageServicesTest {
     }
 
     @Test
-    public void getPackageById_Should_Handle_Package_Not_Found(){
+    public void getPackageById_Should_Handle_Package_Not_Found() {
         String id = "8888";
         when(mongoOperations.findById(id, Package.class)).thenReturn(null);
         Package result = packageServices.getPackageById(id);
@@ -126,7 +130,7 @@ public class PackageServicesTest {
     }
 
     @Test
-    public void getAllPackages_Should_Return_ListOfPackages(){
+    public void getAllPackages_Should_Return_ListOfPackages() {
         Package spaPackage1 = new Package("1234", "relaxtion Package", "feeling Good", 200);
         Package spaPackage2 = new Package("5678", "Luxury Package", "feeling Great", 300);
         when(mongoOperations.findAll(Package.class)).thenReturn(java.util.Arrays.asList(spaPackage1, spaPackage2));
