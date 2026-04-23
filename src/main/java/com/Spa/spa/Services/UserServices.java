@@ -1,5 +1,6 @@
 package com.Spa.spa.Services;
 
+import java.util.List;
 
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -15,7 +16,7 @@ public class UserServices implements IUserServices {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServices(MongoOperations mongoOperations, JwtService jwtService, PasswordEncoder passwordEncoder ) {
+    public UserServices(MongoOperations mongoOperations, JwtService jwtService, PasswordEncoder passwordEncoder) {
         this.mongoOperations = mongoOperations;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
@@ -45,13 +46,14 @@ public class UserServices implements IUserServices {
     @Override
     public String login(String username, String password) {
         User user = findByUsername(username);
-        if(user == null) return "Invalid username or password";
+        if (user == null)
+            return "Invalid username or password";
         boolean passwordMatch = passwordEncoder.matches(password, user.getPassword());
-        if(!passwordMatch) return "Invalid username or password";
-        String token= jwtService.generateToken(username, user.getRole());
+        if (!passwordMatch)
+            return "Invalid username or password";
+        String token = jwtService.generateToken(username, user.getRole());
         return token;
     }
-
 
     @Override
     public String deleteUser(String id) {
@@ -62,19 +64,20 @@ public class UserServices implements IUserServices {
     }
 
     @Override
-    public User updateUser(String id, String username, String password, String role) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("id").is(id));
-        User user = mongoOperations.findOne(query, User.class);
-        if (user != null) {
-            user.setUsername(username);
-            user.setPassword(passwordEncoder.encode(password));
-            user.setRole(role);
-            mongoOperations.save(user);
-            return user;
-        } else {
+    public User updateUser(String username, String newPassword, String newRole) {
+        User existingUser = findByUsername(username);
+        if (existingUser == null)
             return null;
-        }
+
+        existingUser.setPassword(passwordEncoder.encode(newPassword));
+        existingUser.setRole(newRole);
+        mongoOperations.save(existingUser);
+        return existingUser;
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return mongoOperations.findAll(User.class);
     }
 
 }
